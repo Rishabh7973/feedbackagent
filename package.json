@@ -1,0 +1,9 @@
+{
+  "name": "twilio-feedback-agent",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "twilio": "^4.21.0",
+    "node-fetch": "^3.3.2"
+  }
+}
