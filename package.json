@@ -1,9 +1,10 @@
 {
   "name": "twilio-feedback-agent",
   "version": "1.0.0",
+  "main": "api/start-calls.js",
+  "license": "MIT",
   "type": "module",
   "dependencies": {
-    "twilio": "^4.21.0",
-    "node-fetch": "^3.3.2"
+    "twilio": "^5.2.0"
   }
 }
