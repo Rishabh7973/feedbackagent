@@ -4,24 +4,30 @@ const accountSid = process.env.TWILIO_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const fromNumber = process.env.TWILIO_NUMBER;
 const GOOGLE_SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL;
+const PUBLIC_URL = process.env.PUBLIC_URL;
 
 const client = new Twilio(accountSid, authToken);
 
 export default async function handler(req, res) {
   try {
-    // Fetch student list from Google Sheet (Apps Script Web App)
-    const response = await fetch(GOOGLE_SCRIPT_URL);
-    const students = Array.isArray(response) ? response : Object.values(response);
-
-    if (!students || students.length === 0) {
-      return res.status(404).json({ error: "No students found in Google Sheet" });
+    // ✅ Fetch student list from Google Sheet
+    const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getStudents`);
+    if (!response.ok) {
+      throw new Error(`Google Script responded with status ${response.status}`);
     }
 
-    // Call each student
+    const students = await response.json();
+
+    if (!Array.isArray(students) || students.length === 0) {
+      return res.status(404).json({ success: false, error: "No students found in Google Sheet" });
+    }
+
+    // ✅ Make Twilio calls to each student
     for (const student of students) {
       if (!student.Phone) continue;
+
       await client.calls.create({
-        url: `${process.env.PUBLIC_URL}/api/voice?roll=${encodeURIComponent(student.RollNo)}&name=${encodeURIComponent(student.Name)}&section=${encodeURIComponent(student.Section)}`,
+        url: `${PUBLIC_URL}/api/voice?roll=${encodeURIComponent(student.RollNo)}&name=${encodeURIComponent(student.Name)}&section=${encodeURIComponent(student.Section)}`,
         to: student.Phone,
         from: fromNumber,
       });
