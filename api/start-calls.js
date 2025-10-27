@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   try {
     // Fetch student list from Google Sheet (Apps Script Web App)
     const response = await fetch(GOOGLE_SCRIPT_URL);
-    const students = Array.isArray(data) ? data : Object.values(data);
+    const students = Array.isArray(response) ? response : Object.values(response);
 
     if (!students || students.length === 0) {
       return res.status(404).json({ error: "No students found in Google Sheet" });
